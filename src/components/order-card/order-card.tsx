@@ -1,5 +1,8 @@
+// компонент OrderCard
 import { FC, memo, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useSelector } from '../../services/store';
+import { selectIngredients } from '../../services/selectors/ingredients';
 
 import { OrderCardProps } from './type';
 import { TIngredient } from '@utils-types';
@@ -10,12 +13,14 @@ const maxIngredients = 6;
 export const OrderCard: FC<OrderCardProps> = memo(({ order }) => {
   const location = useLocation();
 
-  /** TODO: взять переменную из стора */
-  const ingredients: TIngredient[] = [];
+  // получаю список ингредиентов из store
+  const ingredients = useSelector(selectIngredients);
 
+  // собираю информацию о заказе
   const orderInfo = useMemo(() => {
     if (!ingredients.length) return null;
 
+    // собираю данные по ингредиентам заказа
     const ingredientsInfo = order.ingredients.reduce(
       (acc: TIngredient[], item: string) => {
         const ingredient = ingredients.find((ing) => ing._id === item);
@@ -25,16 +30,21 @@ export const OrderCard: FC<OrderCardProps> = memo(({ order }) => {
       []
     );
 
+    // считаю стоимость
     const total = ingredientsInfo.reduce((acc, item) => acc + item.price, 0);
 
+    // ограничиваю список отображаемых ингредиентов
     const ingredientsToShow = ingredientsInfo.slice(0, maxIngredients);
 
+    // считаю, сколько осталось скрытых
     const remains =
       ingredientsInfo.length > maxIngredients
         ? ingredientsInfo.length - maxIngredients
         : 0;
 
+    // преобразую дату
     const date = new Date(order.createdAt);
+
     return {
       ...order,
       ingredientsInfo,

@@ -1,33 +1,60 @@
-import { FC, useMemo } from 'react';
+// компонент OrderInfo
+import { FC, useMemo, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from '../../services/store';
+import { getOrderByNumber } from '../../services/slices/order';
+import { selectCurrentOrder } from '../../services/selectors/order';
+import { selectFeedOrders, selectUserOrders } from '../../services/selectors/feed';
+import { selectIngredients } from '../../services/selectors/ingredients';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
 
 export const OrderInfo: FC = () => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+  const { number } = useParams<{ number: string }>();
+  const dispatch = useDispatch();
 
-  const ingredients: TIngredient[] = [];
+  // получаю данные из store
+  const currentOrder = useSelector(selectCurrentOrder);
+  const feedOrders = useSelector(selectFeedOrders);
+  const userOrders = useSelector(selectUserOrders);
+  const ingredients = useSelector(selectIngredients);
 
-  /* Готовим данные для отображения */
+  // ищу заказ в локальных данных
+  const orderData = useMemo(() => {
+    if (currentOrder && currentOrder.number === Number(number)) {
+      return currentOrder;
+    }
+
+    const feedOrder = feedOrders.find(order => order.number === Number(number));
+    if (feedOrder) return feedOrder;
+
+    const userOrder = userOrders.find(order => order.number === Number(number));
+    if (userOrder) return userOrder;
+
+    return null;
+  }, [currentOrder, feedOrders, userOrders, number]);
+
+  // если не найден — загружаю с сервера
+  useEffect(() => {
+    if (!orderData && number) {
+      dispatch(getOrderByNumber(Number(number)));
+    }
+  }, [dispatch, orderData, number]);
+
+  // собираю информацию для отображения
   const orderInfo = useMemo(() => {
-    if (!orderData || !ingredients.length) return null;
+    const order = orderData || currentOrder;
+    if (!order || !ingredients.length) return null;
 
-    const date = new Date(orderData.createdAt);
+    const date = new Date(order.createdAt);
 
     type TIngredientsWithCount = {
       [key: string]: TIngredient & { count: number };
     };
 
-    const ingredientsInfo = orderData.ingredients.reduce(
+    // считаю количество каждого ингредиента
+    const ingredientsInfo = order.ingredients.reduce(
       (acc: TIngredientsWithCount, item) => {
         if (!acc[item]) {
           const ingredient = ingredients.find((ing) => ing._id === item);
@@ -46,18 +73,19 @@ export const OrderInfo: FC = () => {
       {}
     );
 
+    // считаю общую стоимость
     const total = Object.values(ingredientsInfo).reduce(
       (acc, item) => acc + item.price * item.count,
       0
     );
 
     return {
-      ...orderData,
+      ...order,
       ingredientsInfo,
       date,
       total
     };
-  }, [orderData, ingredients]);
+  }, [orderData, currentOrder, ingredients]);
 
   if (!orderInfo) {
     return <Preloader />;
