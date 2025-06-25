@@ -49,13 +49,9 @@ const App = () => {
         } />
         <Route path="/feed/:number" element={
           <div className={styles.detailPageWrap}>
-            <h1 className={`text text_type_main-large ${styles.detailHeader}`}>
-              Информация о заказе
-            </h1>
             <OrderInfo />
           </div>
         } />
-
         <Route path="/login" element={
           <ProtectedRoute onlyUnAuth>
             <Login />
@@ -90,9 +86,6 @@ const App = () => {
         <Route path="/profile/orders/:number" element={
           <ProtectedRoute>
             <div className={styles.detailPageWrap}>
-              <h1 className={`text text_type_main-large ${styles.detailHeader}`}>
-                Информация о заказе
-              </h1>
               <OrderInfo />
             </div>
           </ProtectedRoute>
