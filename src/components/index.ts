@@ -1,3 +1,4 @@
+// реэкспорт компонентов
 export * from './app-header';
 export * from './burger-constructor';
 export * from './burger-constructor-element';
@@ -12,3 +13,4 @@ export * from './order-info';
 export * from './order-status';
 export * from './orders-list';
 export * from './profile-menu';
+export * from './protected-route';

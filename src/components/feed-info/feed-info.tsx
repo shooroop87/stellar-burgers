@@ -1,8 +1,14 @@
+// компонент FeedInfo
 import { FC } from 'react';
-
+import { useSelector } from '../../services/store';
+import { 
+  selectFeedOrders, 
+  selectFeedData 
+} from '../../services/selectors/feed';
 import { TOrder } from '@utils-types';
 import { FeedInfoUI } from '../ui/feed-info';
 
+// получаю список заказов по статусу
 const getOrders = (orders: TOrder[], status: string): number[] =>
   orders
     .filter((item) => item.status === status)
@@ -10,12 +16,12 @@ const getOrders = (orders: TOrder[], status: string): number[] =>
     .slice(0, 20);
 
 export const FeedInfo: FC = () => {
-  /** TODO: взять переменные из стора */
-  const orders: TOrder[] = [];
-  const feed = {};
+  // вытаскиваю заказы и статистику из store
+  const orders = useSelector(selectFeedOrders);
+  const feed = useSelector(selectFeedData);
 
+  // отделяю готовые и в работе
   const readyOrders = getOrders(orders, 'done');
-
   const pendingOrders = getOrders(orders, 'pending');
 
   return (
