@@ -10,15 +10,9 @@ import userReducer, {
 } from '../user';
 import { TUser } from '@utils-types';
 
-describe('userReducer', () => {
-  // Исходное состояние слайса пользователя
-  const initialState = {
-    user: null,
-    isAuthChecked: false,
-    loading: false,
-    error: null
-  };
+const getInitialState = () => userReducer(undefined, { type: '' });
 
+describe('userReducer', () => {
   // Мок данные пользователя для тестирования
   const mockUser: TUser = {
     email: 'mytest@test.com',
@@ -26,6 +20,7 @@ describe('userReducer', () => {
   };
 
   // Доп функция для создания состояния с пользователем
+  const initialState = getInitialState();
   const createStateWithUser = (user: TUser = mockUser) => ({
     ...initialState,
     user,

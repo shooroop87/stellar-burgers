@@ -7,13 +7,10 @@ import constructorReducer, {
 } from '../constructor';
 import { TIngredient } from '../../../utils/types';
 
-describe('constructorReducer', () => {
-  // Исходное состояние конструктора
-  const initialState = {
-    bun: null,
-    ingredients: []
-  };
+// Импортируем initialState из редьюсера
+const getInitialState = () => constructorReducer(undefined, { type: '' });
 
+describe('constructorReducer', () => {
   // Мок булка для тестирования
   const mockBun: TIngredient = {
     _id: '1',
@@ -47,6 +44,7 @@ describe('constructorReducer', () => {
   describe('addIngredient', () => {
     it('должен добавлять булку', () => {
       // Создаю экшен для добавления булки
+      const initialState = getInitialState();
       const action = addIngredient(mockBun);
       const state = constructorReducer(initialState, action);
       
@@ -59,6 +57,7 @@ describe('constructorReducer', () => {
 
     it('должен добавлять начинку в массив ingredients', () => {
       // Создаю экшен для добавления начинки
+      const initialState = getInitialState();
       const action = addIngredient(mockIngredient);
       const state = constructorReducer(initialState, action);
       
@@ -74,6 +73,7 @@ describe('constructorReducer', () => {
   describe('removeIngredient', () => {
     it('должен удалять ингредиент по id', () => {
       // Создаю состояние с одним ингредиентом
+      const initialState = getInitialState();
       const stateWithIngredient = {
         ...initialState,
         ingredients: [{ ...mockIngredient, id: 'test-id' }]
@@ -95,6 +95,7 @@ describe('constructorReducer', () => {
       const ingredient2 = { ...mockIngredient, id: 'id2', name: 'Ингредиент 2' };
       
       // Создаю состояние с двумя ингредиентами
+      const initialState = getInitialState();
       const stateWithIngredients = {
         ...initialState,
         ingredients: [ingredient1, ingredient2]
@@ -119,6 +120,7 @@ describe('constructorReducer', () => {
       };
       
       // Создаю экшен для очистки конструктора
+      const initialState = getInitialState();
       const action = clearConstructor();
       const state = constructorReducer(stateWithData, action);
       

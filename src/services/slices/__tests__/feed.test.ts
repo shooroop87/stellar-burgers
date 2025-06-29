@@ -2,17 +2,9 @@
 import feedReducer, { getFeeds, getUserOrders, clearError } from '../feed';
 import { TOrder } from '@utils-types';
 
-describe('feedReducer', () => {
-  // Исходное состояние ленты заказов
-  const initialState = {
-    orders: [],
-    userOrders: [],
-    total: 0,
-    totalToday: 0,
-    loading: false,
-    error: null
-  };
+const getInitialState = () => feedReducer(undefined, { type: '' });
 
+describe('feedReducer', () => {
   // Мок данные заказов для тестирования
   const mockOrders: TOrder[] = [
     {
@@ -45,6 +37,7 @@ describe('feedReducer', () => {
   describe('getFeeds', () => {
     it('должен установить loading в true при getFeeds.pending', () => {
       // Создаю экшен начала загрузки ленты заказов
+      const initialState = getInitialState();
       const action = { type: getFeeds.pending.type };
       const state = feedReducer(initialState, action);
       
@@ -55,6 +48,7 @@ describe('feedReducer', () => {
 
     it('должен сохранить данные ленты при getFeeds.fulfilled', () => {
       // Создаю экшен успешного получения данных ленты
+      const initialState = getInitialState();
       const action = {
         type: getFeeds.fulfilled.type,
         payload: mockFeedData
@@ -73,6 +67,7 @@ describe('feedReducer', () => {
       const errorMessage = 'Ошибка загрузки ленты заказов';
       
       // Создаю экшен ошибки загрузки ленты
+      const initialState = getInitialState();
       const action = {
         type: getFeeds.rejected.type,
         error: { message: errorMessage }
@@ -88,6 +83,7 @@ describe('feedReducer', () => {
   describe('getUserOrders', () => {
     it('должен установить loading в true при getUserOrders.pending', () => {
       // Создаю экшен начала загрузки заказов пользователя
+      const initialState = getInitialState();
       const action = { type: getUserOrders.pending.type };
       const state = feedReducer(initialState, action);
       
@@ -98,6 +94,7 @@ describe('feedReducer', () => {
 
     it('должен сохранить заказы пользователя при getUserOrders.fulfilled', () => {
       // Создаю экшен успешного получения заказов пользователя
+      const initialState = getInitialState();
       const action = {
         type: getUserOrders.fulfilled.type,
         payload: mockOrders
@@ -113,6 +110,7 @@ describe('feedReducer', () => {
       const errorMessage = 'Ошибка загрузки заказов пользователя';
       
       // Создаю экшен ошибки загрузки заказов пользователя
+      const initialState = getInitialState();
       const action = {
         type: getUserOrders.rejected.type,
         error: { message: errorMessage }
@@ -128,6 +126,7 @@ describe('feedReducer', () => {
   describe('clearError', () => {
     it('должен очищать ошибку при clearError', () => {
       // Создаю состояние с ошибкой
+      const initialState = getInitialState();
       const stateWithError = {
         ...initialState,
         error: 'Test error'

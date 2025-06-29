@@ -2,14 +2,9 @@
 import ingredientsReducer, { fetchIngredients } from '../ingredients';
 import { TIngredient } from '../../../utils/types';
 
-describe('ingredientsReducer', () => {
-  // Исходное состояние списка ингредиентов
-  const initialState = {
-    items: [],
-    loading: false,
-    error: null
-  };
+const getInitialState = () => ingredientsReducer(undefined, { type: '' });
 
+describe('ingredientsReducer', () => {
   // Мок данные ингредиентов для тестирования
   const mockIngredients: TIngredient[] = [
     {
@@ -43,6 +38,7 @@ describe('ingredientsReducer', () => {
   describe('fetchIngredients', () => {
     it('должен установить loading в true при fetchIngredients.pending', () => {
       // Создаю экшен начала загрузки ингредиентов
+      const initialState = getInitialState();
       const action = { type: fetchIngredients.pending.type };
       const state = ingredientsReducer(initialState, action);
       
@@ -53,6 +49,7 @@ describe('ingredientsReducer', () => {
 
     it('должен сохранить данные при fetchIngredients.fulfilled', () => {
       // Создаю экшен успешного получения ингредиентов
+      const initialState = getInitialState();
       const action = {
         type: fetchIngredients.fulfilled.type,
         payload: mockIngredients
@@ -69,6 +66,7 @@ describe('ingredientsReducer', () => {
       const errorMessage = 'Ошибка загрузки';
       
       // Создаю экшен ошибки загрузки ингредиентов
+      const initialState = getInitialState();
       const action = {
         type: fetchIngredients.rejected.type,
         error: { message: errorMessage }

@@ -7,17 +7,9 @@ import orderReducer, {
 } from '../order';
 import { TOrder } from '@utils-types';
 
-describe('orderReducer', () => {
-  // Исходное состояние слайса заказов
-  const initialState = {
-    orderRequest: false,
-    orderModalData: null,
-    orders: [],
-    currentOrder: null,
-    loading: false,
-    error: null
-  };
+const getInitialState = () => orderReducer(undefined, { type: '' });
 
+describe('orderReducer', () => {
   // Мок заказ для тестирования
   const mockOrder: TOrder = {
     _id: '123',
@@ -32,6 +24,7 @@ describe('orderReducer', () => {
   describe('createOrder', () => {
     it('должен установить orderRequest в true при createOrder.pending', () => {
       // Создаю экшен начала создания заказа
+      const initialState = getInitialState();
       const action = { type: createOrder.pending.type };
       const state = orderReducer(initialState, action);
       
@@ -42,6 +35,7 @@ describe('orderReducer', () => {
 
     it('должен сохранить данные заказа при createOrder.fulfilled', () => {
       // Создаю экшен успешного создания заказа
+      const initialState = getInitialState();
       const action = {
         type: createOrder.fulfilled.type,
         payload: mockOrder
@@ -57,6 +51,7 @@ describe('orderReducer', () => {
       const errorMessage = 'Ошибка создания заказа';
       
       // Создаю экшен ошибки создания заказа
+      const initialState = getInitialState();
       const action = {
         type: createOrder.rejected.type,
         error: { message: errorMessage }
@@ -72,6 +67,7 @@ describe('orderReducer', () => {
   describe('getOrderByNumber', () => {
     it('должен установить loading в true при getOrderByNumber.pending', () => {
       // Создаю экшен начала загрузки заказа по номеру
+      const initialState = getInitialState();
       const action = { type: getOrderByNumber.pending.type };
       const state = orderReducer(initialState, action);
       
@@ -86,6 +82,7 @@ describe('orderReducer', () => {
         type: getOrderByNumber.fulfilled.type,
         payload: mockOrder
       };
+      const initialState = getInitialState();
       const state = orderReducer(initialState, action);
       
       // Проверяю что заказ сохранился как текущий и загрузка завершена
@@ -101,6 +98,7 @@ describe('orderReducer', () => {
         type: getOrderByNumber.rejected.type,
         error: { message: errorMessage }
       };
+      const initialState = getInitialState();
       const state = orderReducer(initialState, action);
       
       // Проверяю что ошибка сохранилась и загрузка завершена
@@ -112,6 +110,7 @@ describe('orderReducer', () => {
   describe('clearOrderModalData', () => {
     it('должен очищать данные модального окна заказа при clearOrderModalData', () => {
       // Создаю состояние с данными заказа в модальном окне
+      const initialState = getInitialState();
       const stateWithOrder = {
         ...initialState,
         orderModalData: mockOrder,
@@ -131,6 +130,7 @@ describe('orderReducer', () => {
   describe('clearCurrentOrder', () => {
     it('должен очищать текущий заказ при clearCurrentOrder', () => {
       // Создаю состояние с текущим заказом
+      const initialState = getInitialState();
       const stateWithOrder = {
         ...initialState,
         currentOrder: mockOrder
